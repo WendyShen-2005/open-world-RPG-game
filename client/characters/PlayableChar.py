@@ -1,24 +1,35 @@
+import os.path
+
 import pygame
 
 
-class PlayableChar:
+class PlayableChar(pygame.sprite.Sprite):  # using the pygame.sprite.Sprite super class
 
-    def __init__(self, starting_x, starting_y, speed, height, width):
-        self.x = starting_x
-        self.y = starting_y
-        self.speed = speed
-        self.height = height
-        self.width = width
+    def __init__(self, starting_x, starting_y, group):
+        super().__init__(group)
+        self.image = pygame.image.load(os.path.join('client', 'characters', 'player.png')).convert_alpha()
+        self.rect = self.image.get_rect(center=(starting_x, starting_y))
+        self.direction = pygame.math.Vector2()
+        self.speed = 2
 
-    def display(self, screen):
+    def input(self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT]:
-            self.x -= self.speed
-        if keys[pygame.K_RIGHT]:
-            self.x += self.speed
-        if keys[pygame.K_UP]:
-            self.y -= self.speed
-        if keys[pygame.K_DOWN]:
-            self.y += self.speed
+            self.direction.x = -1
+        elif keys[pygame.K_RIGHT]:
+            self.direction.x = 1
+        else:
+            self.direction.x = 0
 
-        pygame.draw.rect(screen, (255, 0, 0), (self.x, self.y, self.width, self.height))
+        if keys[pygame.K_UP]:
+            self.direction.y = -1
+        elif keys[pygame.K_DOWN]:
+            self.direction.y = 1
+        else:
+            self.direction.y = 0
+
+
+
+    def update(self):
+        self.input()
+        self.rect.center += self.direction * self.speed

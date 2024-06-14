@@ -3,7 +3,7 @@ from _thread import *
 import sys
 
 server = "192.168.0.17"
-port = 3000
+port = 5050
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
