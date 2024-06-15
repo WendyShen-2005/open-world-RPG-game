@@ -10,7 +10,7 @@ class PlayableChar(pygame.sprite.Sprite):  # using the pygame.sprite.Sprite supe
         self.image = pygame.image.load(os.path.join('client', 'characters', 'player.png')).convert_alpha()
         self.rect = self.image.get_rect(center=(starting_x, starting_y))
         self.direction = pygame.math.Vector2()
-        self.speed = 2
+        self.speed = 5
 
     def input(self):
         keys = pygame.key.get_pressed()
@@ -28,7 +28,8 @@ class PlayableChar(pygame.sprite.Sprite):  # using the pygame.sprite.Sprite supe
         else:
             self.direction.y = 0
 
-
+    def set_pos(self, x, y):
+        self.rect.center = pygame.math.Vector2(x, y)
 
     def update(self):
         self.input()
