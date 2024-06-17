@@ -47,6 +47,7 @@ def redraw_window():
         # scene = start_button.display(screen)
     elif scene == "play":
         # scene = home_button.display(screen)
+        camera_group.zoom_control()
         camera_group.custom_draw()
 
 
