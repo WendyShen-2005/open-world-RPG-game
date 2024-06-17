@@ -27,11 +27,13 @@ def change_scene(new_scene):
 me = PlayableChar(0, 0, camera_group)
 me2 = PlayableChar(0, 0, camera_group)
 
+obstacles = []
 
 for i in range(20):
     rand_x = randint(0, 1000)
     rand_y = randint(0, 1000)
     Tree((rand_x, rand_y), camera_group)
+    obstacles.append(Tree((rand_x, rand_y), camera_group))
 
 
 def redraw_window():
@@ -41,6 +43,8 @@ def redraw_window():
     Scene_change_button.current_scene = scene
     screen.fill('#a9d0db')
     camera_group.set_offset(-me.rect.x + screen_x/2 - me.rect.width/2, -me.rect.y + screen_y/2 - me.rect.height/2)
+
+    me.check_collision(obstacles)
 
     if scene == "start":
         print("start")

@@ -34,3 +34,34 @@ class PlayableChar(pygame.sprite.Sprite):  # using the pygame.sprite.Sprite supe
     def update(self):
         self.input()
         self.rect.center += self.direction * self.speed
+
+    # obstacle_actual_rect = percentage of obstacle height that's the actual height
+    def collision_detection(self, obstacle_rect, obstacle_actual_height):
+        c_right = self.rect.x + self.rect.width
+        c_left = self.rect.x
+        c_top = self.rect.y
+        c_bottom = self.rect.y + self.rect.height
+
+        w_right = obstacle_rect.x + obstacle_rect.width
+        w_left = obstacle_rect.x
+        w_top = obstacle_rect.y + obstacle_rect.height * (1-obstacle_actual_height)
+        w_bottom = obstacle_rect.y + obstacle_rect.height
+
+        if (c_right > w_left > c_left and
+                c_right - w_left < c_bottom - w_top and
+                c_right - w_left < w_bottom - c_top):  # collide with left side of wall
+            self.rect.x = w_left - self.rect.width
+        elif (c_left < w_right < c_right and
+              w_right - c_left < c_bottom - w_top and
+              w_right - c_left < w_bottom - c_top):  # collide with right side of wall
+            self.rect.x = w_right
+        elif (c_bottom > w_top > c_top and
+              (c_right > w_left and c_left < w_right)):  # rect collides from top side of the wall
+            self.rect.y = w_top - self.rect.height
+        elif (c_top < w_bottom < c_bottom and
+              (c_right > w_left and c_left < w_right)):  # rect collides from bottom side of the wall
+            self.rect.y = w_bottom
+
+    def check_collision(self, obstacles):
+        for obstacle in obstacles:
+            self.collision_detection(obstacle.rect, obstacle.actual_height)

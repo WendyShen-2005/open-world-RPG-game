@@ -43,11 +43,11 @@ class camera_group(pygame.sprite.Group):
         self.internal_surface.fill('#a9d0db')
         ground_offset = self.ground_rect.topleft + self.offset + self.internal_offset
         self.internal_surface.blit(self.ground_surf, ground_offset)
-        for sprite in sorted(self.sprites(), key=lambda sprite: sprite.rect.bottom):
+        for sprite in sorted(self.sprites(), key=lambda s: s.rect.bottom):
             offset_pos = sprite.rect.topleft + self.offset + self.internal_offset
             self.internal_surface.blit(sprite.image, offset_pos)
 
         scaled_surf = pygame.transform.scale(self.internal_surface, self.internal_surface_size_vector * self.zoom_scale)
-        scaled_rect = scaled_surf.get_rect(center = (self.half_w, self.half_h))
+        scaled_rect = scaled_surf.get_rect(center=(self.half_w, self.half_h))
 
         self.display_surface.blit(scaled_surf, scaled_rect)
