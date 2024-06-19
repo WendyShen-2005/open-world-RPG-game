@@ -1,6 +1,7 @@
 import os.path
 
 import pygame
+from client.characters.Projectiles import Projectile
 
 
 class PlayableChar(pygame.sprite.Sprite):  # using the pygame.sprite.Sprite super class
@@ -11,9 +12,16 @@ class PlayableChar(pygame.sprite.Sprite):  # using the pygame.sprite.Sprite supe
         self.rect = self.image.get_rect(center=(starting_x, starting_y))
         self.direction = pygame.math.Vector2()
         self.speed = 5
+        self.projectiles = []
+        self.group = group
+
+    def add_projectile(self):
+        new_proj = Projectile(self.rect.center, self.group)
+        self.projectiles.append(new_proj)
 
     def input(self):
         keys = pygame.key.get_pressed()
+
         if keys[pygame.K_a]:
             self.direction.x = -1
         elif keys[pygame.K_d]:

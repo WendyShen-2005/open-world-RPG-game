@@ -2,7 +2,8 @@ import os.path
 
 import pygame
 
-class camera_group(pygame.sprite.Group):
+
+class CameraGroup(pygame.sprite.Group):
     def __init__(self):
         super().__init__()
         self.display_surface = pygame.display.get_surface()

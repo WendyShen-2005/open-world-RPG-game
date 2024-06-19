@@ -1,10 +1,10 @@
 import pygame
-from client.UIObjects.button import Scene_change_button
+from client.UIObjects.button import SceneChangeButton
 from client.characters.PlayableChar import PlayableChar
-from random import randint
 from client.environment.tree import Tree
-from client.UIObjects.CameraGroup import camera_group
+from client.UIObjects.CameraGroup import CameraGroup
 from server.network import Network
+from client.characters.Projectiles import Projectile
 
 # initialize variables
 pygame.init()
@@ -12,7 +12,7 @@ screen_x, screen_y = 720, 720
 screen = pygame.display.set_mode((screen_x,screen_y))
 clock = pygame.time.Clock()
 
-camera_group = camera_group()
+camera_group = CameraGroup()
 
 scene = "play"
 
@@ -21,20 +21,16 @@ def change_scene(new_scene):
     global scene
     scene = new_scene
 
-obstacles = []
 
-# for i in range(20):
-#     rand_x = randint(0, 1000)
-#     rand_y = randint(0, 1000)
-#     Tree((rand_x, rand_y), camera_group)
-#     obstacles.append(Tree((rand_x, rand_y), camera_group))
+obstacles = []
 
 
 def redraw_window():
     global scene
 
-    Scene_change_button.mouse_x, Scene_change_button.mouse_y = pygame.mouse.get_pos()
-    Scene_change_button.current_scene = scene
+    Projectile.mouse_pos = pygame.mouse.get_pos() - camera_group.offset
+    SceneChangeButton.mouse_x, SceneChangeButton.mouse_y = pygame.mouse.get_pos()
+    SceneChangeButton.current_scene = scene
     screen.fill('#a9d0db')
     camera_group.set_offset(-me.rect.x + screen_x/2 - me.rect.width/2, -me.rect.y + screen_y/2 - me.rect.height/2)
 
@@ -68,12 +64,6 @@ me = PlayableChar(0, 0, camera_group)
 def update_players(new_positions, players):
     print("new pos: " + str(new_positions) + ", players: " + str(players))
 
-    try:
-        new_positions.index(",")
-        new_positions = new_positions[:-1]
-    except ValueError as e:
-        pass
-
     new_pos = new_positions.split(",")
     print("new positions " + str(new_pos))
     for i in range(len(players)):
@@ -88,11 +78,8 @@ def update_players(new_positions, players):
 def read_obstacles(obst_pos, cam_group):
     obstacles_list = []
     new_obstacles = obst_pos.split(",")
-    print(obst_pos)
-    print(str(new_obstacles) + " yes")
     for pos in new_obstacles:
         p = pos.split("/")
-        print(str(p))
         new_obst = Tree((int(p[0]), int(p[1])), cam_group)
         obstacles_list.append(new_obst)
 
@@ -111,7 +98,8 @@ def main():
     while run:
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
-                Scene_change_button.mouse_clicked = True
+                SceneChangeButton.mouse_clicked = True
+                me.add_projectile()
             if event.type == pygame.QUIT:
                 run = False
         clock.tick(60)
