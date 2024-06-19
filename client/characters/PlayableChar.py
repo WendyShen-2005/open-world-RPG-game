@@ -31,6 +31,10 @@ class PlayableChar(pygame.sprite.Sprite):  # using the pygame.sprite.Sprite supe
     def set_pos(self, x, y):
         self.rect.center = pygame.math.Vector2(x, y)
 
+    def get_pos(self):
+        pos = str(self.rect.centerx) + " " + str(self.rect.centery)
+        return pos
+
     def update(self):
         self.input()
         self.rect.center += self.direction * self.speed
