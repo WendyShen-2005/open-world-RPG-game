@@ -1,6 +1,7 @@
 **Controls:**
 - AWSD - movement
 - QE - zoom in/out
+- Mouse click - aim projectiles
 
 **Tutorial Credits:**
 - camera movement & zoom: https://www.youtube.com/watch?v=u7LPRqrzry8
