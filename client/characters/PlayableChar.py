@@ -2,9 +2,9 @@ import os.path
 
 import pygame
 from client.characters.Projectiles import Projectile
+from client.UIObjects.MouseAttributes import MouseAttributes
 
-
-class PlayableChar(pygame.sprite.Sprite):  # using the pygame.sprite.Sprite super class
+class PlayableChar(pygame.sprite.Sprite, MouseAttributes):  # using the pygame.sprite.Sprite super class
 
     def __init__(self, starting_x, starting_y, group):
         super().__init__(group)
@@ -15,8 +15,8 @@ class PlayableChar(pygame.sprite.Sprite):  # using the pygame.sprite.Sprite supe
         self.projectiles = []
         self.group = group
 
-    def add_projectile(self):
-        new_proj = Projectile(self.rect.center, self.group)
+    def add_projectile(self, end_pos):
+        new_proj = Projectile(self.rect.center, end_pos, self.group)
         self.projectiles.append(new_proj)
 
     def input(self):
@@ -44,6 +44,20 @@ class PlayableChar(pygame.sprite.Sprite):  # using the pygame.sprite.Sprite supe
         return pos
 
     def update(self):
+        mouse_offset = pygame.math.Vector2(MouseAttributes.get_offset())
+        base_pos = pygame.math.Vector2(MouseAttributes.get_mouse_pos())
+        # print(str(mouse_offset) + " " + str(base_pos) + " hello :)")
+        base_pos = base_pos - mouse_offset
+        if MouseAttributes.get_mouse_click():
+            self.add_projectile(base_pos)
+        elif MouseAttributes.get_mouse_hold():
+            upper_pos = base_pos.rotate(20)
+            lower_pos = base_pos.rotate(-20)
+            self.add_projectile(base_pos)
+            self.add_projectile(upper_pos)
+            self.add_projectile(lower_pos)
+
+
         self.input()
         self.rect.center += self.direction * self.speed
 

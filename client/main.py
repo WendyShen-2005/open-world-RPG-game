@@ -5,6 +5,7 @@ from client.environment.tree import Tree
 from client.UIObjects.CameraGroup import CameraGroup
 from server.network import Network
 from client.characters.Projectiles import Projectile
+from client.UIObjects.MouseAttributes import MouseAttributes
 
 # initialize variables
 pygame.init()
@@ -24,13 +25,18 @@ def change_scene(new_scene):
 
 obstacles = []
 
-
 def redraw_window():
     global scene
+
+    MouseAttributes.set_offset(camera_group.offset)
 
     Projectile.mouse_pos = pygame.mouse.get_pos() - camera_group.offset
     SceneChangeButton.mouse_x, SceneChangeButton.mouse_y = pygame.mouse.get_pos()
     SceneChangeButton.current_scene = scene
+
+    # if pygame
+    # MouseAttributes.set_mouse_attributes()
+
     screen.fill('#a9d0db')
     camera_group.set_offset(-me.rect.x + screen_x/2 - me.rect.width/2, -me.rect.y + screen_y/2 - me.rect.height/2)
 
@@ -62,13 +68,13 @@ me = PlayableChar(0, 0, camera_group)
 
 
 def update_players(new_positions, players):
-    print("new pos: " + str(new_positions) + ", players: " + str(players))
+    # print("new pos: " + str(new_positions) + ", players: " + str(players))
 
     new_pos = new_positions.split(",")
-    print("new positions " + str(new_pos))
+    # print("new positions " + str(new_pos))
     for i in range(len(players)):
         pos = new_pos[i].split("/")
-        print(str(pos) + " " + str(i) + " " + str(len(players) - 1))
+        # print(str(pos) + " " + str(i) + " " + str(len(players) - 1))
         x = int(pos[0])
         y = int(pos[1])
         players[i].set_pos(x, y)
@@ -96,12 +102,22 @@ def main():
     obstacles = read_obstacles(n.send("get obstacles"), camera_group)
 
     while run:
+
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
-                SceneChangeButton.mouse_clicked = True
-                me.add_projectile()
-            if event.type == pygame.QUIT:
+                if not MouseAttributes.get_mouse_hold():
+                    MouseAttributes.set_mouse_hold(True)
+                    MouseAttributes.set_mouse_click(False)
+                else:
+                    MouseAttributes.set_mouse_hold(False)
+                    MouseAttributes.set_mouse_click(True)
+            elif event.type == pygame.MOUSEBUTTONUP:
+                MouseAttributes.set_mouse_hold(False)
+                MouseAttributes.set_mouse_click(False)
+            elif event.type == pygame.QUIT:
                 run = False
+
+
         clock.tick(60)
 
         num_players = int(n.send("num players"))

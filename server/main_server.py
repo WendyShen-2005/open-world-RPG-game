@@ -2,7 +2,6 @@ import socket
 from _thread import *
 import sys
 from random import randint
-from client.environment.tree import Tree
 
 server = "192.168.0.18"
 port = 5555
