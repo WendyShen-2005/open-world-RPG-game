@@ -51,8 +51,8 @@ class PlayableChar(pygame.sprite.Sprite, MouseAttributes):  # using the pygame.s
         if MouseAttributes.get_mouse_click():
             self.add_projectile(base_pos)
         elif MouseAttributes.get_mouse_hold():
-            upper_pos = base_pos.rotate(20)
-            lower_pos = base_pos.rotate(-20)
+            upper_pos = base_pos.rotate(10)
+            lower_pos = base_pos.rotate(-10)
             self.add_projectile(base_pos)
             self.add_projectile(upper_pos)
             self.add_projectile(lower_pos)

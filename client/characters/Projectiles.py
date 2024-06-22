@@ -19,5 +19,10 @@ class Projectile(pygame.sprite.Sprite):
         if self.direction.length() != 0:
             self.direction = self.direction.normalize()
 
+        self.__timer = 0
+
     def update(self):
+        self.__timer += 1
+        if self.__timer >= 250:
+            self.kill()
         self.rect.center += self.direction * self.speed
