@@ -6,14 +6,30 @@ from client.UIObjects.MouseAttributes import MouseAttributes
 
 class PlayableChar(pygame.sprite.Sprite, MouseAttributes):  # using the pygame.sprite.Sprite super class
 
-    def __init__(self, starting_x, starting_y, group):
+    def __init__(self, starting_x, starting_y, group, active, projectiles):
         super().__init__(group)
         self.image = pygame.image.load(os.path.join('client', 'characters', 'player.png')).convert_alpha()
         self.rect = self.image.get_rect(center=(starting_x, starting_y))
         self.direction = pygame.math.Vector2()
         self.speed = 5
-        self.projectiles = []
+
+        my_proj_list = []
+
+        for p in projectiles:
+            proj = Projectile(p[0], p[1], group)
+            my_proj_list.append(proj)
+
+        self.projectiles = my_proj_list
+
         self.group = group
+        self.active = active
+
+    def my_data(self):
+        projs = []
+        for p in self.projectiles:
+            projs.append(p.get_start_and_end())
+
+        return [self.rect.center, projs]
 
     def add_projectile(self, end_pos):
         new_proj = Projectile(self.rect.center, end_pos, self.group)
@@ -43,7 +59,20 @@ class PlayableChar(pygame.sprite.Sprite, MouseAttributes):  # using the pygame.s
         pos = str(self.rect.centerx) + " " + str(self.rect.centery)
         return pos
 
-    def update(self):
+    def kill_projectiles(self):
+        i = 0
+        list_len = len(self.projectiles)
+
+        while i < list_len:
+            p = self.projectiles[i]
+            if p.get_timer() >= 250:
+                p.kill()
+                self.projectiles.remove(p)
+                list_len -= 1
+            else:
+                i += 1
+
+    def update_projectiles(self):
         mouse_offset = pygame.math.Vector2(MouseAttributes.get_offset())
         base_pos = pygame.math.Vector2(MouseAttributes.get_mouse_pos())
         # print(str(mouse_offset) + " " + str(base_pos) + " hello :)")
@@ -57,7 +86,10 @@ class PlayableChar(pygame.sprite.Sprite, MouseAttributes):  # using the pygame.s
             self.add_projectile(upper_pos)
             self.add_projectile(lower_pos)
 
-
+    def update(self):
+        if self.active:
+            self.update_projectiles()
+            self.kill_projectiles()
         self.input()
         self.rect.center += self.direction * self.speed
 

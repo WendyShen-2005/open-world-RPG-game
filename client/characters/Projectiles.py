@@ -9,6 +9,9 @@ class Projectile(pygame.sprite.Sprite):
 
     def __init__(self, starting_pos, end_pos, group):
         super().__init__(group)
+        self.start = starting_pos
+        self.end = end_pos
+
         self.image = pygame.image.load(os.path.join('client', 'characters', 'bullet1.png')).convert_alpha()
         self.rect = self.image.get_rect(topleft=starting_pos)
         self.speed = 3
@@ -21,8 +24,12 @@ class Projectile(pygame.sprite.Sprite):
 
         self.__timer = 0
 
+    def get_start_and_end(self):
+        return [self.start, self.end]
+
+    def get_timer(self):
+        return self.__timer
+
     def update(self):
         self.__timer += 1
-        if self.__timer >= 250:
-            self.kill()
         self.rect.center += self.direction * self.speed

@@ -1,4 +1,6 @@
 import socket
+import pickle
+
 
 class Network:
     def __init__(self):
@@ -13,13 +15,9 @@ class Network:
         return self.pos
 
     def connect(self):
-        print("he;;p")
         try:
-            print("he")
             self.client.connect(self.addr)  # try to connect to the client who is on the same address (player)
-            data = self.client.recv(2048).decode()
-            print("connected : " + data)
-            return data  # get information that we the player send back
+            return pickle.loads(self.client.recv(2048))  # get information that we the player send back
         except socket.error as e:
             print(e)
             print("did not connect")
@@ -27,7 +25,7 @@ class Network:
 
     def send(self, data):
         try:
-            self.client.send(str.encode(data))
-            return self.client.recv(2048).decode()
+            self.client.send(pickle.dumps(data))
+            return pickle.loads(self.client.recv(2048))
         except socket.error as e:
             print(e)

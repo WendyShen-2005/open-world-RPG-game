@@ -2,6 +2,7 @@ import socket
 from _thread import *
 import sys
 from random import randint
+import pickle
 
 server = "192.168.0.18"
 port = 5555
@@ -30,22 +31,17 @@ for i in range(20):
 
 
 # tup = everyone's positions: array ["0 0", "1 1"], player = which player we are: int --> 0, 1, 2, etc
-def make_pos(tup, player):
-    str_pos = ""
-    print("HE " + str(tup))
-    for i in range(len(tup)):  # go through each of tup
-        if i != player and i != len(tup) - 1:
-            str_pos += str(tup[i]) + ","
-        elif i != player:
-            str_pos += str(tup[i])
+def other_player_data(players_list, active_player_index):
+    return_list = []
+    for i in range(len(players_list)):
+        if i != active_player_index:
+            return_list.append(players_list[i])
 
-    if str_pos == "":
-        return "N/A"
-    return str_pos
+    return return_list
 
 
 # stores important data that will be modified with the server client communication
-pos = []
+all_players = []
 
 
 # creates a thread for each player, conn = connection stuff (don't understand yet), player = which play we're playing
@@ -53,31 +49,29 @@ def threaded_client(conn, player):
     global pos
     print(player)
 
-    pos.append("0/0")
+    all_players.append([(0,0), []])
+    # pos.append("0/0")
 
     # sending everyone's initial position
-    conn.send(str.encode(make_pos(pos[player], player)))
-    print("new player: " + str(len(pos)))
+    conn.send(pickle.dumps("hello"))
+    print("new player: " + str(len(all_players)))
     while True:
         try:
-            data = conn.recv(2048).decode()  # try to receive data from client
-            # pos[player] = data
+            data = pickle.loads(conn.recv(2048))  # try to receive data from client
 
             if not data:  # shutting down server results in no more data being sent
                 print("Disconnected")
                 break
-            elif data == "num players":
-                reply = str(len(pos))
             elif data == "get obstacles":
                 reply = obstacles
             else:
-                pos[player] = data
-                reply = make_pos(pos, player)  # format of reply: "0 0,1 1,10 100"
+                all_players[player] = data
+                reply = other_player_data(all_players, player)  # format of reply: "0 0,1 1,10 100"
 
             print("Received: ", data)
             print("Sending: ", reply)
 
-            conn.sendall(str.encode(reply))  # sending data back to client
+            conn.sendall(pickle.dumps(reply))  # sending data back to client
         except error as e:
             print(e)
             break

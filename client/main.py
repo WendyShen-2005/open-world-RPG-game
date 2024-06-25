@@ -34,9 +34,6 @@ def redraw_window():
     SceneChangeButton.mouse_x, SceneChangeButton.mouse_y = pygame.mouse.get_pos()
     SceneChangeButton.current_scene = scene
 
-    # if pygame
-    # MouseAttributes.set_mouse_attributes()
-
     screen.fill('#a9d0db')
     camera_group.set_offset(-me.rect.x + screen_x/2 - me.rect.width/2, -me.rect.y + screen_y/2 - me.rect.height/2)
 
@@ -49,6 +46,7 @@ def redraw_window():
         # scene = home_button.display(screen)
         camera_group.zoom_control()
         camera_group.custom_draw()
+    print(len(camera_group.sprites()))
 
 
 def read_pos(str):
@@ -64,7 +62,7 @@ others = []
 
 # start_button = Scene_change_button("Start", 100, 0, "play")
 # home_button = Scene_change_button("Home", 100, 0, "start")
-me = PlayableChar(0, 0, camera_group)
+me = PlayableChar(0, 0, camera_group, True, [])
 
 
 def update_players(new_positions, players):
@@ -117,22 +115,19 @@ def main():
             elif event.type == pygame.QUIT:
                 run = False
 
-
         clock.tick(60)
 
-        num_players = int(n.send("num players"))
-        if num_players != len(others) + 1:
-            others.append(PlayableChar(0, 0, camera_group))
-            print("num players: " + str(num_players))
-
         # other players position gets updated here
+        for o in others:
+            o.kill()
 
-        new_pos = n.send(str(me.rect.centerx) + "/" + str(me.rect.centery))
+        others = []
+        new_other_players_list = n.send(me.my_data())
 
-        if new_pos != "N/A":
-            others = update_players(new_pos, others)
-        # ^^ sending our player pos to server, server sends player 2s data back
-        # me2.set_pos(p2Pos[0], p2Pos[1])
+        for new in new_other_players_list:
+            new_player = PlayableChar(new[0][0], new[0][1], camera_group, False, new[1])
+            print(str(len(new[1])))
+            others.append(new_player)
 
         redraw_window()
 
