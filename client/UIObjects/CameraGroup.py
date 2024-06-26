@@ -44,6 +44,8 @@ class CameraGroup(pygame.sprite.Group):
         self.internal_surface.fill('#a9d0db')
         ground_offset = self.ground_rect.topleft + self.offset + self.internal_offset
         self.internal_surface.blit(self.ground_surf, ground_offset)
+
+        # sort sprited vertically (so that objects higher up are behind lower objects)
         for sprite in sorted(self.sprites(), key=lambda s: s.rect.bottom):
             offset_pos = sprite.rect.topleft + self.offset + self.internal_offset
             self.internal_surface.blit(sprite.image, offset_pos)

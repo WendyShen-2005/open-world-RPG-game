@@ -30,11 +30,10 @@ def redraw_window():
 
     MouseAttributes.set_offset(camera_group.offset)
 
-    Projectile.mouse_pos = pygame.mouse.get_pos() - camera_group.offset
+    # Projectile.mouse_pos = pygame.mouse.get_pos() - camera_group.offset
     SceneChangeButton.mouse_x, SceneChangeButton.mouse_y = pygame.mouse.get_pos()
     SceneChangeButton.current_scene = scene
 
-    screen.fill('#a9d0db')
     camera_group.set_offset(-me.rect.x + screen_x/2 - me.rect.width/2, -me.rect.y + screen_y/2 - me.rect.height/2)
 
     me.check_collision(obstacles)
@@ -46,7 +45,6 @@ def redraw_window():
         # scene = home_button.display(screen)
         camera_group.zoom_control()
         camera_group.custom_draw()
-    print(len(camera_group.sprites()))
 
 
 def read_pos(str):
@@ -66,13 +64,10 @@ me = PlayableChar(0, 0, camera_group, True, [])
 
 
 def update_players(new_positions, players):
-    # print("new pos: " + str(new_positions) + ", players: " + str(players))
 
     new_pos = new_positions.split(",")
-    # print("new positions " + str(new_pos))
     for i in range(len(players)):
         pos = new_pos[i].split("/")
-        # print(str(pos) + " " + str(i) + " " + str(len(players) - 1))
         x = int(pos[0])
         y = int(pos[1])
         players[i].set_pos(x, y)
@@ -119,18 +114,22 @@ def main():
 
         # other players position gets updated here
         for o in others:
+            for p in o.projectiles:
+                p.kill()
             o.kill()
 
         others = []
         new_other_players_list = n.send(me.my_data())
 
+        print("NEW LOOP")
         for new in new_other_players_list:
             new_player = PlayableChar(new[0][0], new[0][1], camera_group, False, new[1])
-            print(str(len(new[1])))
             others.append(new_player)
 
+        print("MY LOOP")
+        for p in me.projectiles:
+            print(str(p.rect.center))
         redraw_window()
-
         camera_group.update()
         pygame.display.update()
 

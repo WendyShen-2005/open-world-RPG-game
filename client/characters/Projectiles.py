@@ -25,7 +25,7 @@ class Projectile(pygame.sprite.Sprite):
         self.__timer = 0
 
     def get_start_and_end(self):
-        return [self.start, self.end]
+        return [self.rect.topleft, self.end]
 
     def get_timer(self):
         return self.__timer

@@ -4,6 +4,7 @@ import pygame
 from client.characters.Projectiles import Projectile
 from client.UIObjects.MouseAttributes import MouseAttributes
 
+
 class PlayableChar(pygame.sprite.Sprite, MouseAttributes):  # using the pygame.sprite.Sprite super class
 
     def __init__(self, starting_x, starting_y, group, active, projectiles):
@@ -15,20 +16,21 @@ class PlayableChar(pygame.sprite.Sprite, MouseAttributes):  # using the pygame.s
 
         my_proj_list = []
 
+        self.group = group
+
         for p in projectiles:
-            proj = Projectile(p[0], p[1], group)
+            proj = Projectile(p[0], p[1], self.group)
             my_proj_list.append(proj)
+        # print("NOT ME: " + str(my_proj_list))
 
         self.projectiles = my_proj_list
 
-        self.group = group
         self.active = active
 
     def my_data(self):
         projs = []
         for p in self.projectiles:
             projs.append(p.get_start_and_end())
-
         return [self.rect.center, projs]
 
     def add_projectile(self, end_pos):
@@ -75,7 +77,7 @@ class PlayableChar(pygame.sprite.Sprite, MouseAttributes):  # using the pygame.s
     def update_projectiles(self):
         mouse_offset = pygame.math.Vector2(MouseAttributes.get_offset())
         base_pos = pygame.math.Vector2(MouseAttributes.get_mouse_pos())
-        # print(str(mouse_offset) + " " + str(base_pos) + " hello :)")
+
         base_pos = base_pos - mouse_offset
         if MouseAttributes.get_mouse_click():
             self.add_projectile(base_pos)

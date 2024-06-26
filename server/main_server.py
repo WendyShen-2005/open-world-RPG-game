@@ -46,7 +46,7 @@ all_players = []
 
 # creates a thread for each player, conn = connection stuff (don't understand yet), player = which play we're playing
 def threaded_client(conn, player):
-    global pos
+    global all_players
     print(player)
 
     all_players.append([(0,0), []])
@@ -66,10 +66,10 @@ def threaded_client(conn, player):
                 reply = obstacles
             else:
                 all_players[player] = data
-                reply = other_player_data(all_players, player)  # format of reply: "0 0,1 1,10 100"
+                reply = other_player_data(all_players, player)
 
-            print("Received: ", data)
-            print("Sending: ", reply)
+            print("Received: ", str(data))
+            print("Sending: ", str(reply))
 
             conn.sendall(pickle.dumps(reply))  # sending data back to client
         except error as e:
