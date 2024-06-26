@@ -125,6 +125,8 @@ def main():
         for new in new_other_players_list:
             new_player = PlayableChar(new[0][0], new[0][1], camera_group, False, new[1])
             others.append(new_player)
+            for pro in new_player.projectiles:
+                print(str(pro.rect.center))
 
         print("MY LOOP")
         for p in me.projectiles:
